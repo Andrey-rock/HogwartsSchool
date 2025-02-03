@@ -27,11 +27,26 @@ public class StudentController {
     }
 
     @GetMapping
-    public Collection<Student> getAllStudents(@RequestParam(required = false) String age) {
-        if (age == null) {
-            return studentService.getAllStudents();
+    public Collection<Student> getStudents(@RequestParam(required = false) String age,
+                                           @RequestParam(required = false) String facultyName) {
+        if ((age != null) && (facultyName == null)) {
+            return studentService.getStudentsByAge(Integer.parseInt(age));
         }
-        return studentService.getStudentsByAge(Integer.parseInt(age));
+        if ((facultyName != null) && (age == null)) {
+            return studentService.findStudentsByFacultyName(facultyName);
+        }
+        if (age != null) {
+            return studentService.getStudentsByAgeAndFaculty(Integer.parseInt(age), facultyName);
+        }
+
+        return studentService.getAllStudents();
+    }
+
+    @GetMapping("/minmax")
+    public Collection<Student> finStudentsByAgeMinMax(@RequestParam int min,
+                                                      @RequestParam int max) {
+
+        return studentService.findStudentsByAgeMinMax(min, max);
     }
 
     @PostMapping

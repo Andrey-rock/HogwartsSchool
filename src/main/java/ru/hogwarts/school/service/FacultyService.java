@@ -29,10 +29,8 @@ public class FacultyService {
     }
 
     public Collection<Faculty> getFacultiesByColour(String colour) {
-        Collection<Faculty> facultiesByColour = getAllFaculties();
-        return facultiesByColour.stream()
-                .filter(f -> f.getColour().equals(colour))
-                .toList();
+
+        return facultyRepository.findByColourIgnoreCase(colour);
     }
 
     public Faculty updateFaculty(@NotNull Faculty faculty) {
@@ -41,5 +39,9 @@ public class FacultyService {
 
     public void deleteFaculty(long id) {
         facultyRepository.deleteById(id);
+    }
+
+    public Faculty findFacultyByStudentName(String studentName) {
+        return facultyRepository.findFacultyByStudentName(studentName);
     }
 }
