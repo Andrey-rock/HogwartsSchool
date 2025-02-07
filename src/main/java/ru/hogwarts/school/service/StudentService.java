@@ -29,9 +29,12 @@ public class StudentService {
     }
 
     public Collection<Student> getStudentsByAge(int age) {
-        Collection<Student> students = getAllStudents();
-        return students.stream().filter(student -> student.getAge() == age)
-                .toList();
+
+        return studentRepository.findByAge(age);
+    }
+
+    public Collection<Student> findStudentsByAgeMinMax(int minAge, int maxAge) {
+        return studentRepository.findByAgeBetween(minAge, maxAge);
     }
 
 
@@ -41,5 +44,13 @@ public class StudentService {
 
     public void deleteStudent(long id) {
         studentRepository.deleteById(id);
+    }
+
+    public Collection<Student> findStudentsByFacultyName(String name) {
+        return studentRepository.findStudentsByFacultyName(name);
+    }
+
+    public Collection<Student> getStudentsByAgeAndFaculty(int age, String facultyName) {
+        return studentRepository.findStudentsByAgeAndFacultyName(age, facultyName);
     }
 }

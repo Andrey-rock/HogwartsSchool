@@ -6,6 +6,7 @@ import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
+import java.util.Collections;
 
 @RestController
 @RequestMapping("faculty")
@@ -27,11 +28,17 @@ public class FacultyController {
     }
 
     @GetMapping
-    public Collection<Faculty> getAllFaculties(@RequestParam(required = false) String colour) {
-        if (colour == null) {
-            return facultyService.getAllFaculties();
+    public Collection<Faculty> getFaculties(@RequestParam(required = false) String colour,
+                                            @RequestParam(required = false) String studentName) {
+        if (!(colour == null)) {
+            return facultyService.getFacultiesByColour(colour);
         }
-        return facultyService.getFacultiesByColour(colour);
+        if (!(studentName == null || studentName.isEmpty())) {
+            Collection<Faculty> result = new java.util.ArrayList<>(Collections.emptyList());
+            result.add(facultyService.findFacultyByStudentName(studentName));
+            return result;
+        }
+        return facultyService.getAllFaculties();
     }
 
     @PostMapping
