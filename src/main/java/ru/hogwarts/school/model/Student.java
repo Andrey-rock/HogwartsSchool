@@ -1,5 +1,6 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -16,6 +17,12 @@ public class Student {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "avatar_id")
+    @JsonIgnore
+    private Avatar avatar;
+
 
     public Student(long id, String name, int age) {
         this.id = id;
@@ -75,5 +82,9 @@ public class Student {
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 '}';
+    }
+
+    public void setAvatar(Avatar avatar) {
+        this.avatar = avatar;
     }
 }

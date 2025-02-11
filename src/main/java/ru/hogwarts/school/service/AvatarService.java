@@ -2,12 +2,16 @@ package ru.hogwarts.school.service;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,6 +19,7 @@ import java.nio.file.Path;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
+@Transactional
 public class AvatarService {
 
     @Value("${path.to.avatars.folder}")
@@ -45,11 +50,29 @@ public class AvatarService {
         }
         Avatar avatar = findAvatar(studentId);
         avatar.setStudent(student);
+        student.setAvatar(avatar);
         avatar.setFilePath(filePath.toString());
         avatar.setFileSize(avatarFile.getSize());
         avatar.setMediaType(avatarFile.getContentType());
-        avatar.setData(avatarFile.getBytes());
+        avatar.setData(generatePreview(filePath));
         avatarRepository.save(avatar);
+        studentRepository.save(student);
+    }
+
+    private byte[] generatePreview(Path filePath) throws IOException {
+        try (InputStream is = Files.newInputStream(filePath);
+             BufferedInputStream bis = new BufferedInputStream(is, 1024);
+             ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            BufferedImage image = ImageIO.read(bis);
+
+            int height = image.getHeight() / (image.getWidth() / 100);
+            BufferedImage preview = new BufferedImage(100, height, image.getType());
+            Graphics2D g = preview.createGraphics();
+            g.drawImage(image, 0, 0, 100, height, null);
+            g.dispose();
+            ImageIO.write(preview, getExtensions(filePath.getFileName().toString()), bos);
+            return bos.toByteArray();
+        }
     }
 
     public Avatar findAvatar(Long studentId) {
@@ -59,5 +82,4 @@ public class AvatarService {
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
-
 }

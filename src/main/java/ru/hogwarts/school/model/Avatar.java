@@ -1,9 +1,6 @@
 package ru.hogwarts.school.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.*;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -17,9 +14,11 @@ public class Avatar {
     String filePath;
     Long fileSize;
     String mediaType;
+
     byte[] data;
 
     @OneToOne
+    @JoinColumn(name = "student_id")
     Student student;
 
     public Avatar() {
