@@ -14,7 +14,7 @@ public class Faculty {
     private String name;
     private String colour;
 
-    @OneToMany(mappedBy = "faculty")
+    @OneToMany(mappedBy = "faculty", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Collection<Student> student;
 
     public Faculty(long id, String name, String colour) {
