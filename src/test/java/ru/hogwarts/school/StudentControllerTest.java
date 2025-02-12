@@ -28,14 +28,49 @@ public class StudentControllerTest {
         Assertions.assertThat(studentController).isNotNull();
     }
 
+    @Test
+    void getAllStudents() throws Exception {
+        Assertions
+                .assertThat(restTemplate.getForObject("http://localhost:" + port + "/student", String.class))
+                .isEqualTo("[{\"id\":1,\"name\":\"Garry\",\"age\":11}," +
+                        "{\"id\":2,\"name\":\"Germiona\",\"age\":12}," +
+                        "{\"id\":3,\"name\":\"Ron\",\"age\":13}]");
+    }
 
     @Test
-    public void testPostStudent() throws Exception {
+    void getStudentById() throws Exception {
+        Assertions
+                .assertThat(restTemplate.getForObject("http://localhost:" + port + "/student/1", String.class))
+                .isEqualTo("{\"id\":1,\"name\":\"Garry\",\"age\":11}");
+    }
 
-        Student student = new Student(1l, "Test", 10);
+    @Test
+    void getStudentsByAgeMinMax() throws Exception {
+        Assertions
+                .assertThat(restTemplate.getForObject("http://localhost:" + port + "/student/minmax?min=12&max=13", String.class))
+                .isEqualTo("[{\"id\":2,\"name\":\"Germiona\",\"age\":12}," +
+                        "{\"id\":3,\"name\":\"Ron\",\"age\":13}]");
+    }
+
+    @Test
+    void testPostStudent() throws Exception {
+
+        Student student = new Student();
+        student.setName("Test");
+        student.setAge(10);
 
         Assertions
-                .assertThat(this.restTemplate.postForObject("http://localhost:" + port + "/student", student, String.class))
-                .isEqualTo("[{\"id\":1,\"name\":\"Test\",\"age\":10}]");
+                .assertThat(restTemplate.postForObject("http://localhost:" + port + "/student", student, String.class))
+                .isEqualTo("{\"id\":1,\"name\":\"Test\",\"age\":10}");
+    }
+
+    @Test
+    void testPutStudent() throws Exception {
+        Student student = new Student();
+        student.setId(3);
+        student.setName("Ron");
+        student.setAge(12);
+
+
     }
 }
