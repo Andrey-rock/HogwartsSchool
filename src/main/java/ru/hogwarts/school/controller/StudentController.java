@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Student;
@@ -49,6 +50,7 @@ public class StudentController {
         return studentService.findStudentsByAgeMinMax(min, max);
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Student addStudent(@RequestBody Student student) {
         return studentService.addStudent(student);
@@ -63,9 +65,9 @@ public class StudentController {
         return ResponseEntity.notFound().build();
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("{id}")
-    public ResponseEntity<Student> deleteStudent(@PathVariable int id) {
+    public void deleteStudent(@PathVariable int id) {
         studentService.deleteStudent(id);
-        return ResponseEntity.ok().build();
     }
 }

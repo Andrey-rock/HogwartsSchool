@@ -38,6 +38,10 @@ public class Student {
         this.faculty = faculty;
     }
 
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
     public long getId() {
         return id;
     }
@@ -86,5 +90,9 @@ public class Student {
 
     public void setAvatar(Avatar avatar) {
         this.avatar = avatar;
+    }
+
+    public Avatar getAvatar() {
+        return avatar;
     }
 }
