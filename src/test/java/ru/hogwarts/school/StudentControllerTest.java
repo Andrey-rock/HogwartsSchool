@@ -134,6 +134,24 @@ public class StudentControllerTest {
     }
 
     @Test
+    void testPutStudentByIdNotExist() {
+        Student student1 = createTestStudent("Garry", 11);
+        long id = student1.getId();
+        Student student2 = new Student();
+        student2.setId(id + 1);
+        student2.setName("Garry");
+        student2.setAge(12);
+
+        HttpEntity<Student> request = new HttpEntity<>(student2);
+
+        ResponseEntity<Student> response = restTemplate.exchange("http://localhost:" + port + "/student",
+                HttpMethod.PUT, request, Student.class);
+
+        HttpStatusCode status = response.getStatusCode();
+        Assertions.assertThat(status).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
     void testDeleteStudent() {
         Student student = createTestStudent("Garry", 11);
         long id = student.getId();

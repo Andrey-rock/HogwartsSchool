@@ -39,7 +39,10 @@ public class StudentService {
 
 
     public Student updateStudent(@NotNull Student student) {
-        return studentRepository.save(student);
+        if (studentRepository.existsById(student.getId())) {
+            return studentRepository.save(student);
+        }
+        return null;
     }
 
     public void deleteStudent(long id) {

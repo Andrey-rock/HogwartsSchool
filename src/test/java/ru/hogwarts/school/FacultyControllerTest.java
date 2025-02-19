@@ -130,6 +130,24 @@ public class FacultyControllerTest {
         Assertions.assertThat(status).isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    void updateFacultyWithIdNotExistTest() {
+        Faculty faculty1 = createTestFaculty("Griffindor", "red");
+        long id = faculty1.getId();
+        Faculty faculty2 = new Faculty();
+        faculty2.setId(id + 1);
+        faculty2.setName("Griffindor");
+        faculty2.setColour("gold");
+        HttpEntity<Faculty> request = new HttpEntity<>(faculty2);
+
+        ResponseEntity<Faculty> response = restTemplate.exchange("http://localhost:" + port + "/faculty",
+                HttpMethod.PUT, request, Faculty.class);
+
+        HttpStatusCode status = response.getStatusCode();
+
+        Assertions.assertThat(status).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
 
     @Test
     void deleteFacultyTest() {
