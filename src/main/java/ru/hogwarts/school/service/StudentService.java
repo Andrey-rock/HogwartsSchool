@@ -56,4 +56,16 @@ public class StudentService {
     public Collection<Student> getStudentsByAgeAndFaculty(int age, String facultyName) {
         return studentRepository.findStudentsByAgeAndFacultyName(age, facultyName);
     }
+
+    public int getAllStudentsCount() {
+        return studentRepository.getAllStudentsCount();
+    }
+
+    public double getAvgAge() {
+        return studentRepository.getAvgAge();
+    }
+
+    public Collection<Student> getFiveLastStudent() {
+        return studentRepository.getFiveLastStudent();
+    }
 }
