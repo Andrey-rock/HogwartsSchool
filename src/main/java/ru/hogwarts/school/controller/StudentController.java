@@ -70,4 +70,19 @@ public class StudentController {
     public void deleteStudent(@PathVariable int id) {
         studentService.deleteStudent(id);
     }
+
+    @GetMapping("/count")
+    public int getAllStudentsCount() {
+        return studentService.getAllStudentsCount();
+    }
+
+    @GetMapping("/avg_age")
+    public double getAvgAge() {
+        return studentService.getAvgAge();
+    }
+
+    @GetMapping("/5_last")
+    public Collection<Student> getFiveLastStudents() {
+        return studentService.getFiveLastStudent();
+    }
 }

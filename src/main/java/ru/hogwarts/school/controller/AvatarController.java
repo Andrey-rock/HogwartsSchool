@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -54,5 +55,10 @@ public class AvatarController {
             response.setContentLength(Math.toIntExact(avatar.getFileSize()));
             is.transferTo(os);
         }
+    }
+
+    @GetMapping("/avatar")
+    public Collection<Avatar> getAllAvatars(@RequestParam int page, @RequestParam int size) {
+        return avatarService.getAllAvatars(page, size);
     }
 }
