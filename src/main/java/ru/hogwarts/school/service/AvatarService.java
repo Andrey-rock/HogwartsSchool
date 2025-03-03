@@ -1,5 +1,8 @@
 package ru.hogwarts.school.service;
 
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -37,12 +40,20 @@ public class AvatarService {
         this.studentRepository = studentRepository;
     }
 
+    Logger logger = LoggerFactory.getLogger(AvatarService.class);
+
     public Collection<Avatar> getAllAvatars(int page, int size) {
+
+        logger.info("Was invoked method for get all avatars");
+
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         return avatarRepository.findAll(pageRequest).getContent();
     }
 
-    public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
+    public void uploadAvatar(Long studentId, @NotNull MultipartFile avatarFile) throws IOException {
+
+        logger.info("Was invoked method for upload avatar");
+
         Student student = studentRepository.getById(studentId);
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
@@ -66,7 +77,10 @@ public class AvatarService {
         studentRepository.save(student);
     }
 
-    private byte[] generatePreview(Path filePath) throws IOException {
+    private byte @NotNull [] generatePreview(@NotNull Path filePath) throws IOException {
+
+        logger.info("Was invoked method for generate preview");
+
         try (InputStream is = Files.newInputStream(filePath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
@@ -83,10 +97,12 @@ public class AvatarService {
     }
 
     public Avatar findAvatar(Long studentId) {
+        logger.info("Was invoked method for find avatar by student id");
         return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
     }
 
-    private String getExtensions(String fileName) {
+    private @NotNull String getExtensions(@NotNull String fileName) {
+        logger.info("Was invoked method for get extension");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 }
