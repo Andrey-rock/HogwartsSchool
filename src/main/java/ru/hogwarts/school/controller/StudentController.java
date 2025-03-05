@@ -59,10 +59,7 @@ public class StudentController {
     @PutMapping
     public ResponseEntity<Student> updateStudent(@RequestBody Student student) {
         Student updatedStudent = studentService.updateStudent(student);
-        if (updatedStudent != null) {
-            return ResponseEntity.ok(updatedStudent);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updatedStudent);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)

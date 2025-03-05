@@ -8,6 +8,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 @Service
 public class StudentService {
@@ -27,7 +28,10 @@ public class StudentService {
 
     public Student getStudent(long id) {
         logger.info("Was invoked method for get student by id");
-        return studentRepository.findById(id).orElse(null);
+        return studentRepository.findById(id).orElseThrow(() -> {
+            logger.error("There is not student with id = {}", id);
+            return new NoSuchElementException("Не найден студент с id " + id);
+        });
     }
 
     public Collection<Student> getAllStudents() {
@@ -48,10 +52,12 @@ public class StudentService {
 
     public Student updateStudent(@NotNull Student student) {
         logger.info("Was invoked method for update student");
-        if (studentRepository.existsById(student.getId())) {
+        Long id = student.getId();
+        if (studentRepository.existsById(id)) {
             return studentRepository.save(student);
         }
-        return null;
+        logger.error("Not found student with id = {}", id);
+        throw  new NoSuchElementException("Не найден студент с id " + id);
     }
 
     public void deleteStudent(long id) {

@@ -20,6 +20,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -54,7 +55,10 @@ public class AvatarService {
 
         logger.info("Was invoked method for upload avatar");
 
-        Student student = studentRepository.getById(studentId);
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> {
+            logger.error("There is not student with id = {}", studentId);
+            return new NoSuchElementException("Не найден студент с id " + studentId);
+        });
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
@@ -66,6 +70,8 @@ public class AvatarService {
         ) {
             bis.transferTo(bos);
         }
+        logger.debug("Avatar recording was successful");
+
         Avatar avatar = findAvatar(studentId);
         avatar.setStudent(student);
         student.setAvatar(avatar);
@@ -75,6 +81,7 @@ public class AvatarService {
         avatar.setData(generatePreview(filePath));
         avatarRepository.save(avatar);
         studentRepository.save(student);
+        logger.debug("The data has been successfully written to the database");
     }
 
     private byte @NotNull [] generatePreview(@NotNull Path filePath) throws IOException {
