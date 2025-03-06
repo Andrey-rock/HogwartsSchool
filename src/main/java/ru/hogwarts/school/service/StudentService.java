@@ -8,6 +8,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 
 @Service
@@ -88,5 +89,25 @@ public class StudentService {
     public Collection<Student> getFiveLastStudent() {
         logger.info("Was invoked method for get five last student");
         return studentRepository.getFiveLastStudent();
+    }
+
+    public Collection<Student> getStudentsWithNameStartingWithA() {
+        logger.info("Was invoked method for get students with name starting with A");
+        return studentRepository.findAll().stream()
+                .filter(s -> s.getName().startsWith("А"))
+                .peek(s -> {
+                    String name = s.getName();
+                    s.setName(name.toUpperCase());
+                })
+                .sorted(Comparator.comparing(Student::getName))
+                .toList();
+    }
+
+    public double getAverageAge() {
+        logger.info("Was invoked method for get average age for students");
+        return studentRepository.findAll().stream()
+                .mapToDouble(Student::getAge)
+                .average()
+                .orElse(Double.NaN);
     }
 }

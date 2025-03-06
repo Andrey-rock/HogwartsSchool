@@ -62,4 +62,9 @@ public class FacultyController {
     public void deleteFaculty(@PathVariable int id) {
         facultyService.deleteFaculty(id);
     }
+
+    @GetMapping("/longer_name")
+    public String getLongerNameFaculty() {
+        return facultyService.getLongerNameFaculty();
+    }
 }

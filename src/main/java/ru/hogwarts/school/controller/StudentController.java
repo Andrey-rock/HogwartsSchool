@@ -74,12 +74,24 @@ public class StudentController {
     }
 
     @GetMapping("/avg_age")
-    public double getAvgAge() {
-        return studentService.getAvgAge();
+    public String getAvgAge() {
+        return String.format("%.2f", studentService.getAvgAge());
     }
 
     @GetMapping("/5_last")
     public Collection<Student> getFiveLastStudents() {
         return studentService.getFiveLastStudent();
     }
+
+    @GetMapping("/name_start_a")
+    public Collection<Student> getStudentsWithNameStartingWithA() {
+        return studentService.getStudentsWithNameStartingWithA();
+    }
+
+    @GetMapping("/avg_age_stream")
+    public String getAverageAge() {
+        return String.format("%.2f", studentService.getAverageAge());
+    }
+
+
 }
