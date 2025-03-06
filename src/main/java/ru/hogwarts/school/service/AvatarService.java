@@ -1,5 +1,8 @@
 package ru.hogwarts.school.service;
 
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.NoSuchElementException;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -37,13 +41,24 @@ public class AvatarService {
         this.studentRepository = studentRepository;
     }
 
+    Logger logger = LoggerFactory.getLogger(AvatarService.class);
+
     public Collection<Avatar> getAllAvatars(int page, int size) {
+
+        logger.info("Was invoked method for get all avatars");
+
         PageRequest pageRequest = PageRequest.of(page - 1, size);
         return avatarRepository.findAll(pageRequest).getContent();
     }
 
-    public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
-        Student student = studentRepository.getById(studentId);
+    public void uploadAvatar(Long studentId, @NotNull MultipartFile avatarFile) throws IOException {
+
+        logger.info("Was invoked method for upload avatar");
+
+        Student student = studentRepository.findById(studentId).orElseThrow(() -> {
+            logger.error("There is not student with id = {}", studentId);
+            return new NoSuchElementException("Не найден студент с id " + studentId);
+        });
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
@@ -55,6 +70,8 @@ public class AvatarService {
         ) {
             bis.transferTo(bos);
         }
+        logger.debug("Avatar recording was successful");
+
         Avatar avatar = findAvatar(studentId);
         avatar.setStudent(student);
         student.setAvatar(avatar);
@@ -64,9 +81,13 @@ public class AvatarService {
         avatar.setData(generatePreview(filePath));
         avatarRepository.save(avatar);
         studentRepository.save(student);
+        logger.debug("The data has been successfully written to the database");
     }
 
-    private byte[] generatePreview(Path filePath) throws IOException {
+    private byte @NotNull [] generatePreview(@NotNull Path filePath) throws IOException {
+
+        logger.info("Was invoked method for generate preview");
+
         try (InputStream is = Files.newInputStream(filePath);
              BufferedInputStream bis = new BufferedInputStream(is, 1024);
              ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
@@ -83,10 +104,12 @@ public class AvatarService {
     }
 
     public Avatar findAvatar(Long studentId) {
+        logger.info("Was invoked method for find avatar by student id");
         return avatarRepository.findByStudentId(studentId).orElse(new Avatar());
     }
 
-    private String getExtensions(String fileName) {
+    private @NotNull String getExtensions(@NotNull String fileName) {
+        logger.info("Was invoked method for get extension");
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 }
