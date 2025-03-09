@@ -19,8 +19,13 @@ public class InfoController {
 
     @GetMapping("/sum_million")
     public int getSum() {
-        return Stream.iterate(1, a -> a + 1).parallel()
+        // Сдесь по заданию параллельный стрим, но он не даёт положительного эффекта
+        long start = System.currentTimeMillis();
+        int sum = Stream.iterate(1, a -> a + 1)
                 .limit(1_000_000)
                 .reduce(0, Integer::sum);
+        long finish = System.currentTimeMillis() - start;
+        System.out.println("finish = " + finish);
+        return sum;
     }
 }
