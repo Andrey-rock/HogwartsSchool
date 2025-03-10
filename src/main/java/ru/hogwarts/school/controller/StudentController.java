@@ -116,12 +116,12 @@ public class StudentController {
         printName(allStudents.get(0).getName());
         printName(allStudents.get(1).getName());
         new Thread(() -> {
-            System.out.println(allStudents.get(2).getName());
-            System.out.println(allStudents.get(3).getName());
+            printName(allStudents.get(2).getName());
+            printName(allStudents.get(3).getName());
         }).start();
         new Thread(() -> {
-            System.out.println(allStudents.get(4).getName());
-            System.out.println(allStudents.get(5).getName());
+            printName(allStudents.get(4).getName());
+            printName(allStudents.get(5).getName());
         }).start();
     }
 
