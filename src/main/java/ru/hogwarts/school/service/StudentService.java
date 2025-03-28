@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 public class StudentService {
@@ -58,7 +56,7 @@ public class StudentService {
             return studentRepository.save(student);
         }
         logger.error("Not found student with id = {}", id);
-        throw  new NoSuchElementException("Не найден студент с id " + id);
+        throw new NoSuchElementException("Не найден студент с id " + id);
     }
 
     public void deleteStudent(long id) {
@@ -109,5 +107,37 @@ public class StudentService {
                 .mapToDouble(Student::getAge)
                 .average()
                 .orElse(Double.NaN);
+    }
+
+    public void printStudentsParallel() {
+        List<Student> allStudents = studentRepository.findAll();
+        System.out.println(allStudents.get(0).getName());
+        System.out.println(allStudents.get(1).getName());
+        new Thread(() -> {
+            System.out.println(allStudents.get(2).getName());
+            System.out.println(allStudents.get(3).getName());
+        }).start();
+        new Thread(() -> {
+            System.out.println(allStudents.get(4).getName());
+            System.out.println(allStudents.get(5).getName());
+        }).start();
+    }
+
+    public void printStudentsSynchronized() {
+        List<Student> allStudents = studentRepository.findAll();
+        printName(allStudents.get(0).getName());
+        printName(allStudents.get(1).getName());
+        new Thread(() -> {
+            printName(allStudents.get(2).getName());
+            printName(allStudents.get(3).getName());
+        }).start();
+        new Thread(() -> {
+            printName(allStudents.get(4).getName());
+            printName(allStudents.get(5).getName());
+        }).start();
+    }
+
+    private synchronized void printName(String studentName) {
+        System.out.println(studentName);
     }
 }

@@ -9,7 +9,7 @@ import ru.hogwarts.school.service.StudentService;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("student")
+@RequestMapping("students")
 public class StudentController {
 
     private final StudentService studentService;
@@ -93,5 +93,13 @@ public class StudentController {
         return String.format("%.2f", studentService.getAverageAge());
     }
 
+    @GetMapping("/print-parallel")
+    public void printStudentsParallel() {
+        studentService.printStudentsParallel();
+    }
 
+    @GetMapping("/print-synchronized")
+    public void printStudentsSynchronized() {
+        studentService.printStudentsSynchronized();
+    }
 }
